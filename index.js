@@ -31,6 +31,12 @@ async function run() {
     //students related api 
     app.post('/students', async(req, res) => {
         const student = req.body;
+        //insert email if student does not exist
+        const query = {email: student.email};
+        const existsStudent = await studentCollection.findOne(query)
+        if(existsStudent){
+            return res.send({message: 'Student already exists', insertedId: null})
+        }
         const result = await studentCollection.insertOne(student);
         // res.send(result);
         console.log(result)
