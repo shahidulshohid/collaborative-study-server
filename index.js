@@ -27,6 +27,7 @@ async function run() {
     // await client.connect();
     
     const studentCollection = client.db('collaborativeStudy').collection('students');
+    const studySessionCollection = client.db('collaborativeStudy').collection('studySessions');
 
     //students related api 
     app.post('/students', async(req, res) => {
@@ -38,6 +39,13 @@ async function run() {
             return res.send({message: 'Student already exists', insertedId: null})
         }
         const result = await studentCollection.insertOne(student);
+
+        //create study session 
+        app.post('/studySessions', async(req, res) => {
+          const result = await studySessionCollection.insertOne()
+          res.send(result)
+        })
+
         // res.send(result);
         console.log(result)
     })
