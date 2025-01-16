@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const post = process.env.PORT || 5000;
 const app = express();
 
@@ -39,15 +39,34 @@ async function run() {
             return res.send({message: 'Student already exists', insertedId: null})
         }
         const result = await studentCollection.insertOne(student);
-
-        //create study session 
-        app.post('/studySessions', async(req, res) => {
-          const result = await studySessionCollection.insertOne()
-          res.send(result)
-        })
-
         // res.send(result);
         console.log(result)
+    })
+
+    // post method for create study session 
+    app.post('/studySessions', async(req, res) => {
+      const newSession = req.body;
+      const result = await studySessionCollection.insertOne(newSession)
+      res.send(result)
+    })
+
+    //get method for getting 6 study sessions for home page
+    app.get('/studySessions', async(req, res) => {
+      const result = await studySessionCollection.find().limit(6).toArray()
+      res.send(result)
+    })
+    //get method for getting all study sessions
+    app.get('/studySessionsAll', async(req, res) => {
+      const result = await studySessionCollection.find().toArray()
+      res.send(result)
+    })
+
+    //get method for getting one specific study session for readMore page
+    app.get('/studySessions/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await studySessionCollection.findOne(query)
+      res.send(result)
     })
 
     // Send a ping to confirm a successful connection
