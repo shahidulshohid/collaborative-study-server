@@ -61,6 +61,21 @@ async function run() {
       res.send(result)
     })
 
+    // update registration fee for view all study session 
+    app.patch('/studySessionsAll/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const updateData = req.body;
+      const updateDoc = {
+        $set: {
+          registrationFee:updateData.registrationFee
+        }
+      }
+      const result = await studySessionCollection.updateOne(query, updateDoc)
+      console.log(result)
+      res.send(result)
+    })
+
     //get method for getting one specific study session for readMore page
     app.get('/studySessions/:id', async(req, res) => {
       const id = req.params.id;
