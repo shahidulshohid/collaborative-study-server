@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const post = process.env.PORT || 5000;
@@ -28,6 +29,13 @@ async function run() {
     
     const studentCollection = client.db('collaborativeStudy').collection('students');
     const studySessionCollection = client.db('collaborativeStudy').collection('studySessions');
+
+    // jwt related api 
+    app.post('/jwt', async(req, res) => {
+      const user = req.body 
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'5h'})
+      res.send({token})
+    })
 
     //students related api 
     app.post('/students', async(req, res) => {
