@@ -32,36 +32,41 @@ async function run() {
     //students related api 
     app.post('/students', async(req, res) => {
         const student = req.body;
-        //insert email if student does not exist
+        //insert email if student does not exist add the time of login
         const query = {email: student.email};
         const existsStudent = await studentCollection.findOne(query)
         if(existsStudent){
             return res.send({message: 'Student already exists', insertedId: null})
         }
         const result = await studentCollection.insertOne(student);
-        // res.send(result);
-        console.log(result)
+        res.send(result);
     })
 
-    // post method for create study session 
+    //get method for all use page (admin)
+    app.get('/students', async(req, res) => {
+      const result = await studentCollection.find().toArray()
+      res.send(result)
+    })
+
+    // post method for create study session(tutor) 
     app.post('/studySessions', async(req, res) => {
       const newSession = req.body;
       const result = await studySessionCollection.insertOne(newSession)
       res.send(result)
     })
 
-    //get method for getting 6 study sessions for home page
+    //get method for getting 6 study sessions for home page(home)
     app.get('/studySessions', async(req, res) => {
       const result = await studySessionCollection.find().limit(6).toArray()
       res.send(result)
     })
-    //get method for getting all study sessions
+    //get method for getting all study sessions(admin)
     app.get('/studySessionsAll', async(req, res) => {
       const result = await studySessionCollection.find().toArray()
       res.send(result)
     })
 
-    // update registration fee for view all study session 
+    // update registration fee for view all study session(admin)
     app.patch('/studySessionsAll/:id', async(req, res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
@@ -76,7 +81,15 @@ async function run() {
       res.send(result)
     })
 
-    //get method for getting one specific study session for readMore page
+    // delete method for rejecting view all study session(admin)
+    app.delete('/studySessionsAll/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await studySessionCollection.deleteOne(query) 
+      res.send(result)
+    })
+
+    //get method for getting one specific study session for readMore page(home)
     app.get('/studySessions/:id', async(req, res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
