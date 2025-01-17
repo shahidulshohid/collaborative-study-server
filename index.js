@@ -42,12 +42,6 @@ async function run() {
         res.send(result);
     })
 
-    //get method for all use page (admin)
-    app.get('/students', async(req, res) => {
-      const result = await studentCollection.find().toArray()
-      res.send(result)
-    })
-
     // post method for create study session(tutor) 
     app.post('/studySessions', async(req, res) => {
       const newSession = req.body;
@@ -60,6 +54,15 @@ async function run() {
       const result = await studySessionCollection.find().limit(6).toArray()
       res.send(result)
     })
+    
+    //get method for getting one specific study session for readMore page(home)
+    app.get('/studySessions/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await studySessionCollection.findOne(query)
+      res.send(result)
+    })
+    
     //get method for getting all study sessions(admin)
     app.get('/studySessionsAll', async(req, res) => {
       const result = await studySessionCollection.find().toArray()
@@ -89,13 +92,20 @@ async function run() {
       res.send(result)
     })
 
-    //get method for getting one specific study session for readMore page(home)
-    app.get('/studySessions/:id', async(req, res) => {
-      const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
-      const result = await studySessionCollection.findOne(query)
+    //get method for all users page (admin)
+    app.get('/users', async(req, res) => {
+      const result = await studentCollection.find().toArray()
       res.send(result)
     })
+
+    //delete method for all user page(admin)
+    app.delete('/users/:id', async(req, res) => {
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const result = await studentCollection.findOne(query)
+      res.send(result)
+    })
+
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
