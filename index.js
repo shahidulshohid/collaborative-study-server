@@ -62,7 +62,7 @@ async function run() {
       const result = await studySessionCollection.findOne(query)
       res.send(result)
     })
-    
+    //============================= admin
     //get method for getting all study sessions(admin)
     app.get('/studySessionsAll', async(req, res) => {
       const result = await studySessionCollection.find().toArray()
@@ -102,10 +102,21 @@ async function run() {
     app.delete('/users/:id', async(req, res) => {
       const id = req.params.id 
       const query = {_id: new ObjectId(id)}
-      const result = await studentCollection.findOne(query)
+      const result = await studentCollection.deleteOne(query)
       res.send(result)
     })
-
+    //update role for admin page(admin)
+    app.patch('/users/admin/:id', async(req, res) => {
+      const id = req.params.id 
+      const filter = {_id: new ObjectId(id)}
+      const updateDoc = {
+        $set: {
+          role: "admin"
+        }
+      }
+      const result = await studentCollection.updateOne(filter, updateDoc)
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
