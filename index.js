@@ -29,6 +29,7 @@ async function run() {
     
     const studentCollection = client.db('collaborativeStudy').collection('students');
     const studySessionCollection = client.db('collaborativeStudy').collection('studySessions');
+    const BookedSessionCollection = client.db('collaborativeStudy').collection('bookedSession');
 
     // jwt related api 
     app.post('/jwt', async(req, res) => {
@@ -160,6 +161,14 @@ async function run() {
         }
       }
       const result = await studentCollection.updateOne(filter, updateDoc)
+      res.send(result)
+    })
+
+    // post method for booked session
+    app.post('/bookedSession/:id', async(req, res) => {
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const result = await BookedSessionCollection.insertOne(query)
       res.send(result)
     })
 
