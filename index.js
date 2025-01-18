@@ -41,16 +41,28 @@ async function run() {
     const verifyToken = (req, res, next) => {
       console.log('Inside verify token', req.headers.authorization )
       if(!req.headers.authorization){
-        return res.status(401).send({message:'forbidden access'})
+        return res.status(401).send({message:'unauthorized access'})
       }
       const token = req.headers.authorization.split(' ')[1]
       jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
         if(error){
-          return res.status(401).send({message:'forbidden access'})
+          return res.status(401).send({message:'unauthorized access'})
         }
         req.decoded = decoded
         next()
       })
+    }
+
+    // use verify admin after verifyToken
+    const verifyAdmin = async(req, res, next) => {
+      const email = req.decoded.email 
+      const query = {email: email}
+      const user = await studentCollection.findOne(query)
+      const isAdmin = user?.role === "admin"
+      if(!isAdmin){
+        return res.status(403).send({message: 'forbidden access'})
+      }
+      next()
     }
 
     //students related api 
@@ -86,7 +98,16 @@ async function run() {
       const result = await studySessionCollection.findOne(query)
       res.send(result)
     })
+
     //============================= admin
+
+    // check student tutor and admin 
+    app.get('/users/role/:email', async(req, res) => {
+      const email = req.params.email 
+      const result = await studentCollection.findOne({email})
+      res.send({role: result?.role})
+    })
+
     //get method for getting all study sessions(admin)
     app.get('/studySessionsAll', async(req, res) => {
       const result = await studySessionCollection.find().toArray()
@@ -117,20 +138,20 @@ async function run() {
     })
 
     //get method for all users page (admin)
-    app.get('/users', verifyToken, async(req, res) => {
+    app.get('/users', verifyToken, verifyAdmin, async(req, res) => {
       const result = await studentCollection.find().toArray()
       res.send(result)
     })
 
     //delete method for all user page(admin)
-    app.delete('/users/:id', async(req, res) => {
+    app.delete('/users/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id 
       const query = {_id: new ObjectId(id)}
       const result = await studentCollection.deleteOne(query)
       res.send(result)
     })
     //update role for admin page(admin)
-    app.patch('/users/admin/:id', async(req, res) => {
+    app.patch('/users/admin/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id 
       const filter = {_id: new ObjectId(id)}
       const updateDoc = {
