@@ -101,6 +101,12 @@ async function run() {
       res.send(result)
     })
 
+    //get method for getting all tutors for home page(home)
+    app.get('/students/tutor', async(req, res) => {
+      const result = await studentCollection.find({role:'tutor'}).toArray()
+      res.send(result)
+    })
+
     //============================= admin
 
     // check student tutor and admin 
