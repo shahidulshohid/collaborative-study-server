@@ -31,6 +31,7 @@ async function run() {
     const studySessionCollection = client.db('collaborativeStudy').collection('studySessions');
     const BookedSessionCollection = client.db('collaborativeStudy').collection('bookedSession');
     const reviewCollection = client.db('collaborativeStudy').collection('review');
+    const createNotesCollection = client.db('collaborativeStudy').collection('createNotes');
 
     // jwt related api 
     app.post('/jwt', async(req, res) => {
@@ -195,9 +196,16 @@ async function run() {
     })
 
     //post method for review and rating save from details page(student)
-    app.post('/review', async(req, res) => {
+    app.post('/reviews', async(req, res) => {
       const newReview = req.body;
       const result = await reviewCollection.insertOne(newReview)
+      res.send(result)
+    })
+
+    //post method for create note (student)
+    app.post('/notes', async(req, res) => {
+      const newNote = req.body
+      const result = await createNotesCollection.insertOne(newNote)
       res.send(result)
     })
 
