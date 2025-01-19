@@ -78,7 +78,8 @@ async function run() {
         const result = await studentCollection.insertOne(student);
         res.send(result);
     })
-
+    
+    //=================================================== tutor
     // post method for create study session(tutor) 
     app.post('/studySessions', async(req, res) => {
       const newSession = req.body;
@@ -163,12 +164,18 @@ async function run() {
       const result = await studentCollection.updateOne(filter, updateDoc)
       res.send(result)
     })
-
+    
+    //===================================== student
     // post method for booked session
-    app.post('/bookedSession/:id', async(req, res) => {
-      const id = req.params.id 
-      const query = {_id: new ObjectId(id)}
-      const result = await BookedSessionCollection.insertOne(query)
+    app.post('/bookedSession', async(req, res) => {
+      const newBookedSession = req.body
+      const result = await BookedSessionCollection.insertOne(newBookedSession)
+      res.send(result)
+    })
+
+    //get method for getting all data for booked session
+    app.get('/bookedSession', async(req, res) => {
+      const result = await BookedSessionCollection.find().toArray()
       res.send(result)
     })
 
