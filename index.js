@@ -30,6 +30,7 @@ async function run() {
     const studentCollection = client.db('collaborativeStudy').collection('students');
     const studySessionCollection = client.db('collaborativeStudy').collection('studySessions');
     const BookedSessionCollection = client.db('collaborativeStudy').collection('bookedSession');
+    const reviewCollection = client.db('collaborativeStudy').collection('review');
 
     // jwt related api 
     app.post('/jwt', async(req, res) => {
@@ -179,17 +180,24 @@ async function run() {
       res.send(result)
     })
 
-    //get method for getting all data for booked session
+    //get method for getting all data for booked session(student)
     app.get('/bookedSession', async(req, res) => {
       const result = await BookedSessionCollection.find().toArray()
       res.send(result)
     })
 
-    //get method for getting one specific data for view booked session
+    //get method for getting one specific data for view booked session(student)
     app.get('/bookedSession/:id', async(req, res) => {
       const id = req.params.id 
       const query = {_id: new ObjectId(id)}
       const result = await BookedSessionCollection.findOne(query)
+      res.send(result)
+    })
+
+    //post method for review and rating save from details page(student)
+    app.post('/review', async(req, res) => {
+      const newReview = req.body;
+      const result = await reviewCollection.insertOne(newReview)
       res.send(result)
     })
 
