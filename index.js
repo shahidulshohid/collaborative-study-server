@@ -210,20 +210,35 @@ async function run() {
       const result = await createNotesCollection.insertOne(newNote)
       res.send(result)
     })
-
-    //get method for getting one specific data for update page(student)
-    app.get('/notes/:id', async(req, res)=> {
-      const id = req.params.id 
-      const query = {_id: new ObjectId(id)}
-      const result = await createNotesCollection.findOne(query)
-      res.send(result)
-    })
     
     // delete method for deleting note form manage personal notes page(student)
     app.delete('/notes/:id', async(req, res) => {
       const id = req.params.id
       const query = {_id: new ObjectId(id)}
       const result = await createNotesCollection.deleteOne(query)
+      res.send(result)
+    })
+
+    //get method for getting one specific data for update page(student)
+    app.get('/updateNotes/:id', async(req, res)=> {
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const result = await createNotesCollection.findOne(query)
+      res.send(result)
+    })
+
+    // patch method for update data for manage personal notes page (student)
+    app.patch('/updateStudentNote/:id', async(req, res) => {
+      const id = req.params.id 
+      const filter = {_id: new ObjectId(id)}
+      const updateData = req.body
+      const updateDoc = {
+        $set: {
+          title:updateData.title,
+          description:updateData.description
+        }
+      }
+      const result = await createNotesCollection.updateOne(filter, updateDoc)
       res.send(result)
     })
 
