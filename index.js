@@ -204,6 +204,12 @@ async function run() {
       res.send(result)
     })
 
+    //get method for getting all review for read more page(student)
+    app.get('/reviews', async(req, res) => {
+      const result = await reviewCollection.find().toArray()
+      res.send(result)
+    })
+
     //post method for create note (student)
     app.post('/notes', async(req, res) => {
       const newNote = req.body
