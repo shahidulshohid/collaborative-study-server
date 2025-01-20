@@ -181,17 +181,19 @@ async function run() {
       res.send(result)
     })
 
-    //get method for getting all data for booked session(student)
-    app.get('/bookedSession', async(req, res) => {
-      const result = await BookedSessionCollection.find().toArray()
-      res.send(result)
-    })
-
     //get method for getting one specific data for view booked session(student)
     app.get('/bookedSession/:id', async(req, res) => {
       const id = req.params.id 
       const query = {_id: new ObjectId(id)}
       const result = await BookedSessionCollection.findOne(query)
+      res.send(result)
+    })
+    
+    //get method for getting all data for booked session(student)
+    app.get('/bookedSessions/:email', async(req, res) => {
+      const email = req.params.email
+      const query = {studentEmail:email}
+      const result = await BookedSessionCollection.find(query).toArray()
       res.send(result)
     })
 
@@ -206,6 +208,14 @@ async function run() {
     app.post('/notes', async(req, res) => {
       const newNote = req.body
       const result = await createNotesCollection.insertOne(newNote)
+      res.send(result)
+    })
+
+    //get method for getting all notes by email for manage personal notes page(student)
+    app.get('/allNotes/:email', async(req, res) => {
+      const email = req.params.email 
+      const query = {studentEmail: email}
+      const result = await createNotesCollection.find(query).toArray()
       res.send(result)
     })
 
