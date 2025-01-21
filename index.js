@@ -135,7 +135,7 @@ async function run() {
         }
       }
       const result = await studySessionCollection.updateOne(query, updateDoc)
-      console.log(result)
+      // console.log(result)
       res.send(result)
     })
 
@@ -148,10 +148,10 @@ async function run() {
     })
 
     //get method for all users page (admin)
-    app.get('/users', verifyToken, verifyAdmin, async(req, res) => {
-      const result = await studentCollection.find().toArray()
-      res.send(result)
-    })
+    // app.get('/users', verifyToken, verifyAdmin, async(req, res) => {
+    //   const result = await studentCollection.find().toArray()
+    //   res.send(result)
+    // })
 
     //delete method for all user page(admin)
     app.delete('/users/:id', verifyToken, verifyAdmin, async(req, res) => {
@@ -161,17 +161,33 @@ async function run() {
       res.send(result)
     })
     //update role for admin page(admin)
-    app.patch('/users/admin/:id', verifyToken, verifyAdmin, async(req, res) => {
+    app.patch('/users/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id 
+      const data = req.body
       const filter = {_id: new ObjectId(id)}
       const updateDoc = {
         $set: {
-          role: "admin"
+          role:data.role
         }
       }
       const result = await studentCollection.updateOne(filter, updateDoc)
       res.send(result)
     })
+
+    // search bar for all users page (admin)
+    app.get('/users', async(req, res) => {
+      // const {search} = req.query 
+      const search = req.query.search || "";
+      const query = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },  
+          { email: { $regex: search, $options: 'i' } } 
+        ]
+      };
+      const result = await studentCollection.find(query).toArray()
+      res.send(result)
+    })
+
     
     //===================================== student
     // post method for booked session
