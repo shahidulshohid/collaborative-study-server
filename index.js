@@ -118,9 +118,16 @@ async function run() {
       res.send({role: result?.role})
     })
 
-    //get method for getting all study sessions(admin)
+    //get method for getting all study sessions(tutor)
     app.get('/studySessionsAll', async(req, res) => {
       const result = await studySessionCollection.find().toArray()
+      res.send(result)
+    })
+    
+    // after filtering get data for view all study parge (adming)
+    app.get('/studySessionsAllFilter', async(req, res) => {
+      const query = {status: {$ne:'rejected'}}
+      const result = await studySessionCollection.find(query).toArray()
       res.send(result)
     })
 
@@ -131,27 +138,35 @@ async function run() {
       const updateData = req.body;
       const updateDoc = {
         $set: {
-          registrationFee:updateData.registrationFee
+          registrationFee:updateData.registrationFee,
+          status:updateData.status,
         }
       }
       const result = await studySessionCollection.updateOne(query, updateDoc)
-      // console.log(result)
       res.send(result)
     })
+    
+    //patch method for rejection status for view all study session(admin)
+    app.patch('/studySession/rejected/:id', async(req, res) => {
+      const id = req.params.id 
+       const query = {_id: new ObjectId(id)}
+       const rejectedData = req.body 
+       const updateDoc = {
+        $set: {
+          status:rejectedData.status
+        }
+       }
+       const result = await studySessionCollection.updateOne(query, updateDoc)
+       res.send(result)
+    })
 
-    // delete method for rejecting view all study session(admin)
+    // delete method for view all study session(admin)
     app.delete('/studySessionsAll/:id', async(req, res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
       const result = await studySessionCollection.deleteOne(query) 
       res.send(result)
     })
-
-    //get method for all users page (admin)
-    // app.get('/users', verifyToken, verifyAdmin, async(req, res) => {
-    //   const result = await studentCollection.find().toArray()
-    //   res.send(result)
-    // })
 
     //delete method for all user page(admin)
     app.delete('/users/:id', verifyToken, verifyAdmin, async(req, res) => {
