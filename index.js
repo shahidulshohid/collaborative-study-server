@@ -109,6 +109,20 @@ async function run() {
       res.send(result)
     })
 
+    // patch method for reRequest for view all study tutor (tutor)
+    app.patch('/studySessionsApproval/:id', async(req, res)  => {
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const reRequest = req.body
+      const updateDoc = {
+        $set: {
+          status: reRequest.status
+        }
+      }
+      const result = await studySessionCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
+
     //============================= admin
 
     // check student tutor and admin 
@@ -203,6 +217,29 @@ async function run() {
       res.send(result)
     })
 
+    // patch method update all study session (admin)
+    app.patch("/updateAllStudySession/:id", async(req, res)=>{
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const allUpdateData = req.body
+      const updateDoc = {
+        $set: {
+          title:allUpdateData.title,
+          description:allUpdateData.description,
+          tutorName:allUpdateData.tutorName,
+          tutorEmail:allUpdateData.tutorEmail,
+          resStartDate:allUpdateData.resStartDate,
+          resEndDate:allUpdateData.resEndDate,
+          claStartDate:allUpdateData.claStartDate,
+          claEndDate:allUpdateData.claEndDate,
+          sessionDuration:allUpdateData.sessionDuration,
+          registrationFee:allUpdateData.registrationFee,
+          image:allUpdateData.image,
+        }
+      }
+      const result = await studySessionCollection.updateMany(query, updateDoc)
+      res.send(result)
+    })
     
     //===================================== student
     // post method for booked session
