@@ -249,6 +249,12 @@ async function run() {
       res.send(result)
     })
 
+    //get session Id for material page(tutor)
+    app.get('/bookedSessionId', async(req, res) => {
+      const result = await BookedSessionCollection.find().toArray()
+      res.send(result)
+    })
+
     //get method for getting one specific data for view booked session(student)
     app.get('/bookedSession/:id', async(req, res) => {
       const id = req.params.id 
