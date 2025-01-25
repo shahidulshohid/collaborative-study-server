@@ -133,8 +133,10 @@ async function run() {
     })
 
     //get method for getting all study sessions(tutor)
-    app.get('/studySessionsAll', async(req, res) => {
-      const result = await studySessionCollection.find().toArray()
+    app.get(`/studySessionsAll/:email`, async(req, res) => {
+      const email = req.params.email 
+      const query = {tutorEmail:email}
+      const result = await studySessionCollection.find(query).toArray()
       res.send(result)
     })
     
@@ -249,7 +251,7 @@ async function run() {
       res.send(result)
     })
 
-    //get session Id for material page(tutor)
+    //get session Id for material page(tutor) aikhane kaj korsi============================
     app.get('/bookedSessionId', async(req, res) => {
       const result = await BookedSessionCollection.find().toArray()
       res.send(result)
@@ -332,7 +334,7 @@ async function run() {
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
