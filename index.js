@@ -131,6 +131,12 @@ async function run() {
       res.send(result)
     })
 
+    //get method for getting all materials for vew all materials page (student)=not finish
+    app.get('/allMaterials/:sessionId', async(req, res) => {
+      const result = await materialsCollection.find({ sessionId: req.params.sessionId });
+      res.send(result)
+    })
+
     // get materials for view materials page (tutor)
     app.get('/viewMaterialsTutor/:email', async(req, res) => {
       const email = req.params.email 
@@ -146,7 +152,7 @@ async function run() {
       const result = await materialsCollection.findOne(query)
       res.send(result)
     })
-    //get material for update materials page (tutor)
+    //patch material for update materials page (tutor)
     app.patch('/materialsUpdate/:id', async(req, res) => {
       const id = req.params.id 
       const query = {_id:new ObjectId(id)}
@@ -159,6 +165,14 @@ async function run() {
         }
       }
       const result = await materialsCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
+
+    //delete material for view all materials (tutor)
+    app.delete('/deleteMaterial/:id', async(req, res) => {
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const result = await materialsCollection.deleteOne(query)
       res.send(result)
     })
 
@@ -179,15 +193,15 @@ async function run() {
       res.send(result)
     })
     
-    // after filtering get data for view all study parge (adming)
-    app.get('/studySessionsAllFilter', async(req, res) => {
+    // after filtering get data for view all study parge (admin)
+    app.get('/studySessionsAllFilter', verifyToken, verifyAdmin, async(req, res) => {
       const query = {status: {$ne:'rejected'}}
       const result = await studySessionCollection.find(query).toArray()
       res.send(result)
     })
 
     // update registration fee for view all study session(admin)
-    app.patch('/studySessionsAll/:id', async(req, res) => {
+    app.patch('/studySessionsAll/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
       const updateData = req.body;
@@ -202,7 +216,7 @@ async function run() {
     })
     
     //patch method for rejection status for view all study session(admin)
-    app.patch('/studySession/rejected/:id', async(req, res) => {
+    app.patch('/studySession/rejected/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id 
        const query = {_id: new ObjectId(id)}
        const rejectedData = req.body 
@@ -216,7 +230,7 @@ async function run() {
     })
 
     // delete method for view all study session(admin)
-    app.delete('/studySessionsAll/:id', async(req, res) => {
+    app.delete('/studySessionsAll/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
       const result = await studySessionCollection.deleteOne(query) 
@@ -245,7 +259,7 @@ async function run() {
     })
 
     // search bar for all users page (admin)
-    app.get('/users', async(req, res) => {
+    app.get('/users', verifyToken, verifyAdmin, async(req, res) => {
       // const {search} = req.query 
       const search = req.query.search || "";
       const query = {
@@ -259,7 +273,7 @@ async function run() {
     })
 
     // patch method update all study session (admin)
-    app.patch("/updateAllStudySession/:id", async(req, res)=>{
+    app.patch("/updateAllStudySession/:id", verifyToken, verifyAdmin, async(req, res)=>{
       const id = req.params.id 
       const query = {_id: new ObjectId(id)}
       const allUpdateData = req.body
@@ -290,7 +304,7 @@ async function run() {
       res.send(result)
     })
 
-    //get session Id for material page(tutor) aikhane kaj korsi============================
+    //get session Id for material page(tutor)=====
     app.get('/bookedSessionId', async(req, res) => {
       const result = await BookedSessionCollection.find().toArray()
       res.send(result)
