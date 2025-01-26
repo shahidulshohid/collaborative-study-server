@@ -146,6 +146,21 @@ async function run() {
       const result = await materialsCollection.findOne(query)
       res.send(result)
     })
+    //get material for update materials page (tutor)
+    app.patch('/materialsUpdate/:id', async(req, res) => {
+      const id = req.params.id 
+      const query = {_id:new ObjectId(id)}
+      const updateData = req.body  
+      const updateDoc = {
+        $set: {
+          title:updateData.title,
+          image:updateData.image,
+          googleLink:updateData.googleLink,
+        }
+      }
+      const result = await materialsCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
 
     //============================= admin
 
