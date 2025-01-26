@@ -104,20 +104,6 @@ async function run() {
       res.send(result)
     })
 
-    // get specific study session for materials page(tutor)
-    app.get('/studySessionsAllForMaterials', async(req, res) => {
-      const {status, email} = req.query
-      const query = {}
-      if(status) {
-        const query = {status:status}
-      }
-      if(email){
-        const query = {tutorEmail:email}
-      }
-      const result = await studySessionCollection.find(query).toArray()
-      res.send(result)
-    })
-
     //get method for getting all tutors for home page(home)
     app.get('/students/tutor', async(req, res) => {
       const result = await studentCollection.find({role:'tutor'}).toArray()
@@ -142,6 +128,22 @@ async function run() {
     app.post('/materials', async(req, res) => {
       const newMaterials = req.body 
       const result =await materialsCollection.insertOne(newMaterials)
+      res.send(result)
+    })
+
+    // get materials for view materials page (tutor)
+    app.get('/viewMaterialsTutor/:email', async(req, res) => {
+      const email = req.params.email 
+      const query = {tutorEmail:email}
+      const result = await materialsCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    //get material for update materials page (tutor)
+    app.get('/getMaterialForUpdate/:id', async(req, res) => {
+      const id = req.params.id 
+      const query = {_id:new ObjectId(id)}
+      const result = await materialsCollection.findOne(query)
       res.send(result)
     })
 
