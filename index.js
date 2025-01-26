@@ -131,9 +131,11 @@ async function run() {
       res.send(result)
     })
 
-    //get method for getting all materials for vew all materials page (student)=not finish
+    //get method for getting all materials for vew all materials page (student)=not finish=======================================================
     app.get('/allMaterials/:sessionId', async(req, res) => {
-      const result = await materialsCollection.find({ sessionId: req.params.sessionId });
+      const id = req.params.sessionId  
+      const query = {_id: new ObjectId(id)}
+      const result = await materialsCollection.find(query);
       res.send(result)
     })
 
@@ -293,6 +295,21 @@ async function run() {
         }
       }
       const result = await studySessionCollection.updateMany(query, updateDoc)
+      res.send(result)
+    })
+
+    // get all materials for view all materials page (admin)
+    app.get('/allMaterialsAdmin', verifyToken, verifyAdmin, async(req, res) => {
+      const result = await materialsCollection.find().toArray()
+      res.send(result)
+    })
+
+    //delete all material for view all materials  (admin)
+    app.delete('/deleteMaterialsData/:id', verifyToken, verifyAdmin, async(req, res) => {
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const result = await materialsCollection.deleteOne(query)
+      console.log(result)
       res.send(result)
     })
     
