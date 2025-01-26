@@ -32,6 +32,7 @@ async function run() {
     const BookedSessionCollection = client.db('collaborativeStudy').collection('bookedSession');
     const reviewCollection = client.db('collaborativeStudy').collection('review');
     const createNotesCollection = client.db('collaborativeStudy').collection('createNotes');
+    const materialsCollection = client.db('collaborativeStudy').collection('materials');
 
     // jwt related api 
     app.post('/jwt', async(req, res) => {
@@ -103,6 +104,20 @@ async function run() {
       res.send(result)
     })
 
+    // get specific study session for materials page(tutor)
+    app.get('/studySessionsAllForMaterials', async(req, res) => {
+      const {status, email} = req.query
+      const query = {}
+      if(status) {
+        const query = {status:status}
+      }
+      if(email){
+        const query = {tutorEmail:email}
+      }
+      const result = await studySessionCollection.find(query).toArray()
+      res.send(result)
+    })
+
     //get method for getting all tutors for home page(home)
     app.get('/students/tutor', async(req, res) => {
       const result = await studentCollection.find({role:'tutor'}).toArray()
@@ -120,6 +135,13 @@ async function run() {
         }
       }
       const result = await studySessionCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
+
+    //post materials data for upload materials page(tutor)
+    app.post('/materials', async(req, res) => {
+      const newMaterials = req.body 
+      const result =await materialsCollection.insertOne(newMaterials)
       res.send(result)
     })
 
