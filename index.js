@@ -33,6 +33,7 @@ async function run() {
     const reviewCollection = client.db('collaborativeStudy').collection('review');
     const createNotesCollection = client.db('collaborativeStudy').collection('createNotes');
     const materialsCollection = client.db('collaborativeStudy').collection('materials');
+    const rejectionCollection = client.db('collaborativeStudy').collection('rejections');
 
     // jwt related api 
     app.post('/jwt', async(req, res) => {
@@ -127,15 +128,30 @@ async function run() {
     //post materials data for upload materials page(tutor)
     app.post('/materials', async(req, res) => {
       const newMaterials = req.body 
-      const result =await materialsCollection.insertOne(newMaterials)
+      const result = await materialsCollection.insertOne(newMaterials)
       res.send(result)
     })
 
-    //get method for getting all materials for vew all materials page (student)=not finish=======================================================
-    app.get('/allMaterials/:sessionId', async(req, res) => {
-      const id = req.params.sessionId  
-      const query = {_id: new ObjectId(id)}
-      const result = await materialsCollection.find(query);
+    // get method for getting all materials for view all materials page (student)====
+    app.get('/materialsAllData', async(req, res) => {
+      const result = await materialsCollection.find().toArray()
+      res.send(result)
+    })
+
+    // get method for tutor materials page (tutor)======
+    app.get('/allStudySessionData', async(req, res) => {
+      const {email, status} = req.query 
+      const query = {tutorEmail:email, status:status}
+      const result = await studySessionCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    //get method for getting all materials for vew all materials page (student)
+    app.get('/studySessionsAllData/:id', async(req, res) => {
+      const studySessionId = req.params.id;
+      const query = { _id: new ObjectId(studySessionId) }; 
+      const result = await studySessionCollection.findOne(query);
+      console.log(result)
       res.send(result)
     })
 
@@ -310,6 +326,19 @@ async function run() {
       const query = {_id: new ObjectId(id)}
       const result = await materialsCollection.deleteOne(query)
       console.log(result)
+      res.send(result)
+    })
+
+    //post method for rejection collection(admin) 
+    app.post('/rejections', async(req, res) => {
+      const newRejection = req.body 
+      const result = await rejectionCollection.insertOne(newRejection)
+      res.send(result)
+    } )
+
+    //get method for rejection data for view all study tutor page (tutor)
+    app.get('/rejectionsData', async(req, res) => {
+      const result = await rejectionCollection.find().toArray()
       res.send(result)
     })
     
