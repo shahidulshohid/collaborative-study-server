@@ -342,6 +342,22 @@ async function run() {
       res.send(result)
     })
     
+    // get allUsers for admin home page (admin)
+    app.get('/allUsers', async(req, res) => {
+      const result = await studentCollection.find().toArray()
+      res.send(result)
+    })
+    // get all study sessions for admin home page (admin)
+    app.get('/allStudySession', async(req, res) => {
+      const result = await studySessionCollection.find().toArray()
+      res.send(result)
+    })
+    // get all materials for admin home page (admin)
+    app.get('/allMaterials', async(req, res) => {
+      const result = await materialsCollection.find().toArray()
+      res.send(result)
+    })
+
     //===================================== student
     // post method for booked session
     app.post('/bookedSession', async(req, res) => {
