@@ -93,7 +93,7 @@ async function run() {
 
     //get method for getting 6 study sessions for home page(home)
     app.get('/studySessions', async(req, res) => {
-      const result = await studySessionCollection.find().limit(6).toArray()
+      const result = await studySessionCollection.find().limit(8).toArray()
       res.send(result)
     })
     
@@ -211,7 +211,7 @@ async function run() {
       res.send(result)
     })
     
-    // after filtering get data for view all study parge (admin)
+    // after filtering get data for view all study page (admin)
     app.get('/studySessionsAllFilter', verifyToken, verifyAdmin, async(req, res) => {
       const query = {status: {$ne:'rejected'}}
       const result = await studySessionCollection.find(query).toArray()
